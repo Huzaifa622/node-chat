@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "node build/index.js",
-    "build": "tsc",
     "dev": "tsc-watch --onSuccess \"npm start\"",
-    "preinstall": "npx prisma migrate deploy"
+    "postinstall": "prisma generate",
+    "build": "tsc"
   },
   "keywords": [
     "Watch",
