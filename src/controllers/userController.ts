@@ -68,7 +68,7 @@ export const userLogin = async (
   const token = await tokenAssign(foundUser);
 
   return res
-    .cookie("token", token, { httpOnly: true, secure: true ,sameSite: "strict"  })
+    .cookie("token", token, { httpOnly: true, secure: true ,sameSite: "lax"  })
     .status(200)
     .json({
       email: foundUser.email ,
