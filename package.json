@@ -1,0 +1,45 @@
+{
+  "name": "products-watch",
+  "version": "1.0.0",
+  "description": "watch products",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node build/index.js",
+    "dev": "tsc-watch --onSuccess \"npm start\"",
+    "preinstall": "npx prisma migrate deploy"
+  },
+  "keywords": [
+    "Watch",
+    "E-commerce"
+  ],
+  "author": "Huz",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.0.3",
+    "socket.io": "^4.8.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/multer": "^1.4.11",
+    "@types/socket.io": "^3.0.1",
+    "prisma": "^6.2.1",
+    "tsc-watch": "^6.0.4",
+    "typescript": "^5.3.3"
+  }
+}
