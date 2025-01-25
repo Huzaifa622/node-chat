@@ -19,3 +19,8 @@ io.on("connection", (socket) => {
         console.log("new user disconnected");
     });
 });
+app.get("/test", (req, res) => {
+    console.log("first");
+    return res.json("Hello from the root");
+});
+

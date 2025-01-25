@@ -21,4 +21,8 @@ io.on("connection", (socket) => {
     console.log("new user disconnected")
   })
 });
+app.get("/", (req:Request, res:Response) => {
+  console.log("first")
+ return res.json("Hello from the root");
+});
 
