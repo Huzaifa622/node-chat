@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import { app } from "./app.js";
 import {createServer} from "http"
 import { Server } from "socket.io";
-import { Request, Response } from "express";
 dotenv.config();
 
 const httpServer = createServer(app)
@@ -21,9 +20,5 @@ io.on("connection", (socket) => {
   socket.on("disconnect" , ()=>{
     console.log("new user disconnected")
   })
-});
-app.get("/", (req:Request, res:Response) => {
-  console.log("first")
- return res.json("Hello from the root");
 });
 
