@@ -10,7 +10,7 @@ app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(
-  cors({credentials: true, origin: 'http://localhost:5173'})
+  cors({credentials: true, origin: 'https://chat-practice-one.vercel.app/'})
 );
 
 
