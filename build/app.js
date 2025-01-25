@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
 app.use("/api/v1", userRouter);
-// app.get("/test", (req, res) => {
-//     console.log("first");
-//     return res.json("Hello from the root");
-// });
+app.get("/", (req, res) => {
+    console.log("first");
+    return res.json("Hello from the root");
+});
