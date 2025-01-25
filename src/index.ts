@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { app } from "./app.js";
 import {createServer} from "http"
 import { Server } from "socket.io";
+import { Request, Response } from "express";
 dotenv.config();
 
 const httpServer = createServer(app)
