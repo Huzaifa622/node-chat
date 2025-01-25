@@ -1,10 +1,8 @@
 {
     "version": 2,
-    "builds": [
-      { "src": "/build/(.*)", "dest": "/build/app.js" }
-    ],
     "routes": [
-      { "src": "./(.*)", "dest": "/" }
+      { "src": "/build/(.*)", "dest": "/build/app.js" }
     ]
+
   }
   
