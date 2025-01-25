@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node build/index.js",
+    "build": "node build/index.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
     "preinstall": "npx prisma migrate deploy"
   },
