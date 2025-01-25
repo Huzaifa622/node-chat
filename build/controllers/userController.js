@@ -59,7 +59,7 @@ export const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     }
     const token = yield tokenAssign(foundUser);
     return res
-        .cookie("token", token)
+        .cookie("token", token, { httpOnly: true, secure: true, sameSite: "none" })
         .status(200)
         .json({
         email: foundUser.email,
