@@ -73,7 +73,6 @@ export const userLogin = async (
     .json({
       email: foundUser.email ,
       name:foundUser.name,
-      token
     });
 };
 export const logout = async (
@@ -81,31 +80,60 @@ export const logout = async (
   res: Response,
   next: NextFunction
 ) => {
-
+  
   const  {token}  = req.cookies;
-
+  
   
   console.log(token)
-
+  
   res.clearCookie("token").status(201).json({
     message:"User logout successfully"
   }) 
-
+  
   // const isMatch = await Descryption(password, foundUser.password);
-
+  
   // if (!isMatch) {
-  //   return res.status(400).json({
-  //     message: "incorrect password",
-  //   });
-  // }
-
-  // const token = await tokenAssign(foundUser);
-
-  // return res
-  //   .cookie("token", token, { httpOnly: true, secure: true ,sameSite: "strict" })
-  //   .status(200)
-  //   .json({
-  //     email: foundUser.email ,
-  //     name:foundUser.name
-  //   });
-};
+    //   return res.status(400).json({
+      //     message: "incorrect password",
+      //   });
+      // }
+      
+      // const token = await tokenAssign(foundUser);
+      
+      // return res
+      //   .cookie("token", token, { httpOnly: true, secure: true ,sameSite: "strict" })
+      //   .status(200)
+      //   .json({
+        //     email: foundUser.email ,
+        //     name:foundUser.name
+        //   });
+      };
+      
+      export const getAllUsers = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+      ) => {
+        const prisma = new PrismaClient();
+        const { name, email, password } = req.body;
+      
+        const foundUsers = await prisma.user.findMany();
+        // if (!foundUser) {
+        //   return res.status(404).json({ message: "user not found" });
+        // }
+      
+        // const isMatch = await Descryption(password, foundUser.password);
+      
+        // if (!isMatch) {
+        //   return res.status(400).json({
+        //     message: "incorrect password",
+        //   });
+        // }
+      
+        // const token = await tokenAssign(foundUser);
+      
+        return res.status(200)
+          .json({
+          data: foundUsers
+          });
+      };

@@ -64,7 +64,6 @@ export const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         .json({
         email: foundUser.email,
         name: foundUser.name,
-        token
     });
 });
 export const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -87,4 +86,23 @@ export const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     //     email: foundUser.email ,
     //     name:foundUser.name
     //   });
+});
+export const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const prisma = new PrismaClient();
+    const { name, email, password } = req.body;
+    const foundUsers = yield prisma.user.findMany();
+    // if (!foundUser) {
+    //   return res.status(404).json({ message: "user not found" });
+    // }
+    // const isMatch = await Descryption(password, foundUser.password);
+    // if (!isMatch) {
+    //   return res.status(400).json({
+    //     message: "incorrect password",
+    //   });
+    // }
+    // const token = await tokenAssign(foundUser);
+    return res.status(200)
+        .json({
+        data: foundUsers
+    });
 });
