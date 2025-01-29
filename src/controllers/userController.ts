@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { Descryption, Encryption } from "../utils/passwordEncryption.js";
 import { tokenAssign } from "../utils/jwt.js";
 import jwt from "jsonwebtoken"
+import { prisma } from "../utils/db.js";
 // import Encryption from "../utils/passwordEncryption.js";
 
 export const createUser = async (
@@ -12,7 +13,7 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
-    const prisma = new PrismaClient();
+
     const { name, email, password } = req.body;
     const hashP = await Encryption(password);
     const isAlreadyRegiter = await prisma.user.findMany({
@@ -45,9 +46,9 @@ export const userLogin = async (
   res: Response,
   next: NextFunction
 ) => {
-  const prisma = new PrismaClient();
-  const { name, email, password } = req.body;
 
+  const { name, email, password } = req.body;
+console.log(email)
   const foundUser = await prisma.user.findUnique({
     where: {
       email: email,
@@ -71,10 +72,14 @@ export const userLogin = async (
     .cookie("token", token, { httpOnly: true, secure: true ,sameSite: "none"   })
     .status(200)
     .json({
+      id:foundUser.id,
       email: foundUser.email ,
       name:foundUser.name,
+      token
     });
 };
+
+
 export const logout = async (
   req: Request,
   res: Response,
@@ -114,10 +119,23 @@ export const logout = async (
         res: Response,
         next: NextFunction
       ) => {
-        const prisma = new PrismaClient();
-        const { name, email, password } = req.body;
+
+ const {user} = req.body;
       
-        const foundUsers = await prisma.user.findMany();
+
+        const foundUsers = await prisma.user.findMany({
+          where: {
+            id: {
+              not: Number(user._id)
+            }
+          },
+          select:{
+            id:true,
+            name:true,
+            image:true,
+            isOnline:true
+          }
+        });
         // if (!foundUser) {
         //   return res.status(404).json({ message: "user not found" });
         // }
@@ -137,3 +155,29 @@ export const logout = async (
           data: foundUsers
           });
       };
+
+      export const getSingleUser = async(req:Request,res:Response,next:NextFunction) =>{
+        try {
+          const {id} = req.params;
+          const user = await prisma.user.findUnique({
+            where:{
+              id: Number(id)
+            }
+          })
+
+          if(!user){
+            return res.status(400).json({
+              message: "user not found"
+            })
+          }
+
+          return res.json({
+            message: "User found",
+            data:user
+          })
+        } catch (error) {
+          return res.status(400).json({
+            message:error
+          })
+        }
+      }

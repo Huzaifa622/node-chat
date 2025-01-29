@@ -10,33 +10,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String
-  password String 
-  // passwrod String   
-//   chatRoom chatRoom[] 
-//  messages message[]
-
+  id       Int       @id @default(autoincrement())
+  image    String     @default("https://images.unsplash.com/photo-1511367461989-f85a21fda167?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D")
+  email    String    @unique
+  name     String
+  password String
+  isOnline Int  @default(0)
+  chatRooms ChatRoom[] @relation("UserChatRooms")
+  messages Message[]
 }
 
-// model chatRoom {
-//   id  Int @id @default(autoincrement())
-//   users User[] 
-//   messages message[] @relation(fields: [])
-// }
+model ChatRoom {
+  id       Int       @id @default(autoincrement())
+  users    User[]    @relation("UserChatRooms")
+  messages Message[]
+}
 
-// model message {
-//    id  Int @id @default(autoincrement())
-//    chatRoom chatRoom @relation(fields: [chatId] , references: [id])
-//    from   User @relation(fields: [userId], references: [id])
-//    to   User @relation(fields: [userId], references: [id])
-//   //  timestamp String @default()
-//       userId Int  @unique
-//       chatId Int  @unique
-// }
-// model UserRegister {
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  chatRoom  ChatRoom @relation(fields: [chatRoomId], references: [id])
+  chatRoomId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}
 
-// }
+enum Online {
+  true
+  false
+}

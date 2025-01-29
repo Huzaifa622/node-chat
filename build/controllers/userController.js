@@ -7,14 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// import AsyncHandler from "../utils/asyncHandler.js";
-import { PrismaClient } from "@prisma/client";
 import { Descryption, Encryption } from "../utils/passwordEncryption.js";
 import { tokenAssign } from "../utils/jwt.js";
+import { prisma } from "../utils/db.js";
 // import Encryption from "../utils/passwordEncryption.js";
 export const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prisma = new PrismaClient();
         const { name, email, password } = req.body;
         const hashP = yield Encryption(password);
         const isAlreadyRegiter = yield prisma.user.findMany({
@@ -41,8 +39,8 @@ export const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     }
 });
 export const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const prisma = new PrismaClient();
     const { name, email, password } = req.body;
+    console.log(email);
     const foundUser = yield prisma.user.findUnique({
         where: {
             email: email,
@@ -62,8 +60,10 @@ export const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         .cookie("token", token, { httpOnly: true, secure: true, sameSite: "none" })
         .status(200)
         .json({
+        id: foundUser.id,
         email: foundUser.email,
         name: foundUser.name,
+        token
     });
 });
 export const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -88,9 +88,20 @@ export const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     //   });
 });
 export const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const prisma = new PrismaClient();
-    const { name, email, password } = req.body;
-    const foundUsers = yield prisma.user.findMany();
+    const { user } = req.body;
+    const foundUsers = yield prisma.user.findMany({
+        where: {
+            id: {
+                not: Number(user._id)
+            }
+        },
+        select: {
+            id: true,
+            name: true,
+            image: true,
+            isOnline: true
+        }
+    });
     // if (!foundUser) {
     //   return res.status(404).json({ message: "user not found" });
     // }
@@ -105,4 +116,28 @@ export const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0,
         .json({
         data: foundUsers
     });
+});
+export const getSingleUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const user = yield prisma.user.findUnique({
+            where: {
+                id: Number(id)
+            }
+        });
+        if (!user) {
+            return res.status(400).json({
+                message: "user not found"
+            });
+        }
+        return res.json({
+            message: "User found",
+            data: user
+        });
+    }
+    catch (error) {
+        return res.status(400).json({
+            message: error
+        });
+    }
 });

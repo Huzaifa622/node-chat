@@ -13,10 +13,11 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
    
       const decoded = jwt.verify(token, "12345667");
       (req as CustomRequest).token = decoded;
-   
+
+   req.body.user = decoded
       next();
     } catch (err) {
-      res.status(401).send('Please authenticate');
+      return res.status(400).json({message:"Token not found"})
     }
    };
    

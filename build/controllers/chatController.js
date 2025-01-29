@@ -7,19 +7,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import jwt from "jsonwebtoken";
-export const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+import { PrismaClient } from "@prisma/client";
+export const createChatRoom = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { token } = req.cookies;
-        if (!token) {
-            throw new Error();
-        }
-        const decoded = jwt.verify(token, "12345667");
-        req.token = decoded;
-        req.body.user = decoded;
-        next();
+        const prisma = new PrismaClient();
+        const { user1, user2 } = req.body;
+        const alreadyHaveChatroom = yield prisma.chatRoom.findFirst({
+            where: {
+                AND: [
+                    { users: { some: user1 } },
+                    { users: { some: user2 } },
+                ],
+            },
+        });
     }
-    catch (err) {
-        return res.status(400).json({ message: "Token not found" });
+    catch (error) {
+        return res.json({ message: error });
     }
 });
