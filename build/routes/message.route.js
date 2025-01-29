@@ -1,10 +1,7 @@
-// import  { Router } from 'express';
-// import { createUser, getAllUsers, logout, userLogin } from "../controllers/userController.js";
-// import { auth } from '../middlewares/auth.js';
-export {};
-// const chatRouter = Router();
-// chatRouter.post('/user', createUser);
-// chatRouter.post('/login', userLogin );
-// chatRouter.get('/get-all-users',auth, getAllUsers );
-// chatRouter.post('/logout',auth , logout );
-// export default chatRouter;
+import { Router } from 'express';
+import { auth } from '../middlewares/auth.js';
+import { checkChatroom } from '../middlewares/checkCheckroom.js';
+import { getAllMessages } from '../controllers/userMessage.js';
+const msgRouter = Router();
+msgRouter.get('/get-all-messages', auth, checkChatroom, getAllMessages);
+export default msgRouter;

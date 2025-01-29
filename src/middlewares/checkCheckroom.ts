@@ -18,6 +18,7 @@ export const checkChatroom = async (
     if (alreadyHaveChatroom) {
         req.body.room = alreadyHaveChatroom
        next();
+       return
     }
     const creatingChatroom =await prisma.chatRoom.create({
       data: {
@@ -30,6 +31,7 @@ export const checkChatroom = async (
     if (creatingChatroom) {
         req.body.room = creatingChatroom
         next();
+        return
     }
   } catch (error) {
     return res.json({ message: error });

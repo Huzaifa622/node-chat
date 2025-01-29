@@ -40,7 +40,6 @@ export const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, 
 });
 export const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password } = req.body;
-    console.log(email);
     const foundUser = yield prisma.user.findUnique({
         where: {
             email: email,
@@ -63,12 +62,11 @@ export const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         id: foundUser.id,
         email: foundUser.email,
         name: foundUser.name,
+        image: foundUser.image,
         token
     });
 });
 export const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { token } = req.cookies;
-    console.log(token);
     res.clearCookie("token").status(201).json({
         message: "User logout successfully"
     });
@@ -119,7 +117,8 @@ export const getAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0,
 });
 export const getSingleUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
+        const { id } = req.body;
+        // console.log(id,'=======================');
         const user = yield prisma.user.findUnique({
             where: {
                 id: Number(id)
@@ -136,6 +135,7 @@ export const getSingleUser = (req, res, next) => __awaiter(void 0, void 0, void 
         });
     }
     catch (error) {
+        // console.log(error)
         return res.status(400).json({
             message: error
         });

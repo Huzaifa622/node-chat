@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/db.js";
 const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { content, user, room } = req.body;
@@ -31,5 +32,28 @@ const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
     catch (error) {
         console.log(error);
+    }
+});
+export const getAllMessages = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { room } = req.body;
+        const allMessages = yield prisma.message.findMany({
+            where: {
+                chatRoomId: room._id
+            }
+        });
+        if (!allMessages) {
+            return res.json({ message: "not found" });
+        }
+        // console.log(allMessages)
+        return res.status(200).json({
+            data: allMessages
+        });
+    }
+    catch (error) {
+        // console.log(error,"---------->")
+        return res.status(400).json({
+            data: error
+        });
     }
 });

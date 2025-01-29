@@ -5,6 +5,7 @@ import userRouter from "./routes/user.route.js";
 import cookieParser from "cookie-parser";
 import chatRouter from "./routes/chat.route.js";
 import { prisma } from "./utils/db.js";
+import msgRouter from "./routes/message.route.js";
 
 export const app = express();
 
@@ -17,7 +18,7 @@ app.use(
 );
 
 
-app.use("/api/v1", userRouter , chatRouter);
+app.use("/api/v1", userRouter , chatRouter , msgRouter);
 // app.use("/api/v1", );
 
 

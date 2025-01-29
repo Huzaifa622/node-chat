@@ -20,6 +20,7 @@ export const checkChatroom = (req, res, next) => __awaiter(void 0, void 0, void 
         if (alreadyHaveChatroom) {
             req.body.room = alreadyHaveChatroom;
             next();
+            return;
         }
         const creatingChatroom = yield prisma.chatRoom.create({
             data: {
@@ -31,6 +32,7 @@ export const checkChatroom = (req, res, next) => __awaiter(void 0, void 0, void 
         if (creatingChatroom) {
             req.body.room = creatingChatroom;
             next();
+            return;
         }
     }
     catch (error) {

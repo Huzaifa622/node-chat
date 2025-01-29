@@ -48,7 +48,7 @@ export const userLogin = async (
 ) => {
 
   const { name, email, password } = req.body;
-console.log(email)
+
   const foundUser = await prisma.user.findUnique({
     where: {
       email: email,
@@ -75,6 +75,7 @@ console.log(email)
       id:foundUser.id,
       email: foundUser.email ,
       name:foundUser.name,
+      image:foundUser.image,
       token
     });
 };
@@ -85,12 +86,6 @@ export const logout = async (
   res: Response,
   next: NextFunction
 ) => {
-  
-  const  {token}  = req.cookies;
-  
-  
-  console.log(token)
-  
   res.clearCookie("token").status(201).json({
     message:"User logout successfully"
   }) 
@@ -158,7 +153,8 @@ export const logout = async (
 
       export const getSingleUser = async(req:Request,res:Response,next:NextFunction) =>{
         try {
-          const {id} = req.params;
+          const {id} = req.body;
+          // console.log(id,'=======================');
           const user = await prisma.user.findUnique({
             where:{
               id: Number(id)
@@ -176,6 +172,7 @@ export const logout = async (
             data:user
           })
         } catch (error) {
+          // console.log(error)
           return res.status(400).json({
             message:error
           })
