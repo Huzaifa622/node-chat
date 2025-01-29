@@ -15,53 +15,55 @@ import { Server } from "socket.io";
 import { prisma } from "./utils/db.js";
 dotenv.config();
 const httpServer = createServer(app);
-const io = new Server(httpServer, { cors: {
+const io = new Server(httpServer, {
+    cors: {
         origin: "http://localhost:5173",
-        methods: ["GET", "POST"]
-    } });
+        methods: ["GET", "POST"],
+    },
+});
 httpServer.listen(process.env.PORT, () => {
     console.log(`Server is running on port http://localhost:${process.env.PORT}`);
 });
 const users = prisma.user;
 const namespace = io.of("/chat");
+//user connection
 namespace.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = socket.handshake.auth.token;
+    if (!userId) {
+        return;
+    }
     const user = yield users.findFirst({ where: { id: userId } });
-    // console.log(user)
     if (user) {
         yield users.updateMany({
             where: {
                 id: userId,
             },
             data: {
-                isOnline: 1
-            }
+                isOnline: 1,
+            },
         });
         socket.broadcast.emit("user-status-changed", {
             userId,
-            isOnline: 1
+            isOnline: 1,
         });
     }
-    // })
+    //disconnection of user
     socket.on("disconnect", () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("new user disconnected");
-        console.log(userId, "-------------<user id");
         if (!userId) {
             console.log("User disconnected without an ID");
-            return; // Exit if no userId
+            return;
         }
-        const updatedUser = yield users.updateManyAndReturn({
+        yield users.updateManyAndReturn({
             where: {
                 id: userId,
             },
             data: {
-                isOnline: 0
-            }
+                isOnline: 0,
+            },
         });
-        console.log("Updated user:", updatedUser);
         socket.broadcast.emit("user-status-changed", {
             userId,
-            isOnline: 0
+            isOnline: 0,
         });
     }));
 }));
