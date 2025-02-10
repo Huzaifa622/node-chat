@@ -17,8 +17,7 @@ dotenv.config();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST"],
+        origin: "http://localhost:3000",
     },
 });
 httpServer.listen(process.env.PORT, () => {
@@ -29,6 +28,7 @@ const namespace = io.of("/chat");
 //user connection
 namespace.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = socket.handshake.auth.token;
+    console.log(socket.id);
     if (!userId) {
         return;
     }
@@ -39,14 +39,33 @@ namespace.on("connection", (socket) => __awaiter(void 0, void 0, void 0, functio
                 id: userId,
             },
             data: {
-                isOnline: 1,
+                isOnline: "online",
             },
         });
         socket.broadcast.emit("user-status-changed", {
             userId,
-            isOnline: 1,
+            isOnline: "online",
         });
     }
+    socket.on("message", ({ content, socketId }) => {
+        console.log(socketId, "here =======>id");
+        io.to(socketId).emit("message", content);
+    });
+    socket.on('typing-message', (id) => __awaiter(void 0, void 0, void 0, function* () {
+        // console.log(id)
+        const updated = yield users.updateManyAndReturn({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                isOnline: "typing",
+            },
+        });
+        console.log(updated);
+        if (updated) {
+            io.emit("status", "typing");
+        }
+    }));
     //disconnection of user
     socket.on("disconnect", () => __awaiter(void 0, void 0, void 0, function* () {
         if (!userId) {
@@ -58,12 +77,12 @@ namespace.on("connection", (socket) => __awaiter(void 0, void 0, void 0, functio
                 id: userId,
             },
             data: {
-                isOnline: 0,
+                isOnline: "offline",
             },
         });
         socket.broadcast.emit("user-status-changed", {
             userId,
-            isOnline: 0,
+            isOnline: "offline",
         });
     }));
 }));

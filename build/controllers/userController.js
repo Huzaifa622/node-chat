@@ -67,6 +67,7 @@ export const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     });
 });
 export const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log(req)
     res.clearCookie("token").status(201).json({
         message: "User logout successfully"
     });

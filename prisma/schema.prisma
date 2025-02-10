@@ -16,7 +16,7 @@ model User {
   email    String    @unique
   name     String
   password String
-  isOnline Int  @default(0)
+  isOnline String  @default("offline")
   chatRooms ChatRoom[] @relation("UserChatRooms")
   messages Message[]
 }
@@ -39,5 +39,6 @@ model Message {
 
 enum Online {
   true
-  false
+  false 
+  typing
 }

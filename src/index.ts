@@ -10,8 +10,7 @@ dotenv.config();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
+    origin: "http://localhost:3000",
   },
 });
 
@@ -27,6 +26,7 @@ const namespace = io.of("/chat");
 //user connection
 namespace.on("connection", async (socket) => {
   const userId = socket.handshake.auth.token;
+  console.log( socket.id) 
   if(!userId) {return }
   const user = await users.findFirst({ where: { id: userId } });
   if (user) {
@@ -35,15 +35,38 @@ namespace.on("connection", async (socket) => {
         id: userId,
       },
       data: {
-        isOnline: 1,
+        isOnline: "online",
       },
     });
 
     socket.broadcast.emit("user-status-changed", {
       userId,
-      isOnline: 1,
+      isOnline: "online",
     });
   }
+
+
+  socket.on("message" , ({content , socketId})=>{
+    console.log(socketId , "here =======>id")
+    io.to(socketId).emit("message" , content)
+  })
+
+  socket.on('typing-message',async (id) => {
+    // console.log(id)
+   const updated = await users.updateManyAndReturn({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        isOnline: "typing",
+      },
+    });
+    console.log(updated)
+    if(updated){
+
+      io.emit("status","typing")
+    }
+  });
 
   //disconnection of user
   socket.on("disconnect", async () => {
@@ -57,12 +80,12 @@ namespace.on("connection", async (socket) => {
         id: userId!,
       },
       data: {
-        isOnline: 0,
+        isOnline: "offline",
       },
     });
     socket.broadcast.emit("user-status-changed", {
       userId,
-      isOnline: 0,
+      isOnline: "offline",
     });
   });
 

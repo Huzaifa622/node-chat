@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../utils/db.js";
 
-const sendMessage = async(req:Request,res:Response,next:NextFunction) =>{
+export const sendMessage = async(req:Request,res:Response,next:NextFunction) =>{
 try {
    const {content , user , room} = req.body;
     const prisma = new PrismaClient();
@@ -15,12 +15,10 @@ try {
     const newMessage = await prisma.message.create({
         data: {
           content,
-          user: { connect: { id: user._id } }, 
+          user: { connect: { id: Number(user._id) } }, 
           chatRoom: { connect: { id: room._id } }, 
         },
       });
-    
-
       return res.status(200).json({
         message:"Messsage delivered",
         data:newMessage

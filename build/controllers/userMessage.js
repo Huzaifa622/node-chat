@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { PrismaClient } from "@prisma/client";
 import { prisma } from "../utils/db.js";
-const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+export const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { content, user, room } = req.body;
         const prisma = new PrismaClient();
@@ -21,7 +21,7 @@ const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         const newMessage = yield prisma.message.create({
             data: {
                 content,
-                user: { connect: { id: user._id } },
+                user: { connect: { id: Number(user._id) } },
                 chatRoom: { connect: { id: room._id } },
             },
         });
